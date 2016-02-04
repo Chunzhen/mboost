@@ -28,7 +28,9 @@ logging.basicConfig(level=logging.DEBUG,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='train.log',
-                filemode='w')
+                filemode='a+')
+
+logging.info("**********************************New Train**********************************")
 
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
@@ -50,9 +52,9 @@ def scale_wrapper():
 	for t in threads:
 		t.join()
 
-class Level_train_thread(threading.Thread):
+class Level_train_thread(object):
 	def __init__(self,config,clf,level,name,X_0,X_1,uid_0,uid_1):
-		threading.Thread.__init__(self)
+		#threading.Thread.__init__(self)
 		self.config=config
 		self.clf=clf
 		self.level=level
@@ -70,9 +72,9 @@ class Level_train_thread(threading.Thread):
 		end=datetime.now()
 		logging.info('End train '+self.name+", cost time: "+str(float((end-start).seconds)/60.0)+"min / "+str(float((end-start).seconds))+"s")
 
-class Xgb_level_train_thread(threading.Thread):
+class Xgb_level_train_thread(object):
 	def __init__(self,config,level,name,X_0,X_1,uid_0,uid_1,params,round):
-		threading.Thread.__init__(self)
+		#threading.Thread.__init__(self)
 		self.config=config
 		self.level=level
 		self.name=name
@@ -98,64 +100,64 @@ def level_one_wrapper():
 	X_0,X_1,uid_0,uid_1=load_data_instance.train_xy()
 	
 	threads=[]
-	threads.append(Level_train_thread(config_instance,LogisticRegression(solver='sag'),'level_one','log_move_lr_sag',X_0,X_1,uid_0,uid_1))
-	threads.append(Level_train_thread(config_instance,LogisticRegression(solver='newton-cg'),'level_one','log_move_lr_newton',X_0,X_1,uid_0,uid_1))
-	threads.append(Level_train_thread(config_instance,LogisticRegression(solver='lbfgs'),'level_one','log_move_lr_lbfgs',X_0,X_1,uid_0,uid_1))
-	threads.append(Level_train_thread(config_instance,LogisticRegression(solver='liblinear'),'level_one','log_move_lr_liblinear',X_0,X_1,uid_0,uid_1))
+	# threads.append(Level_train_thread(config_instance,LogisticRegression(solver='sag'),'level_one','log_move_lr_sag',X_0,X_1,uid_0,uid_1))
+	# threads.append(Level_train_thread(config_instance,LogisticRegression(solver='newton-cg'),'level_one','log_move_lr_newton',X_0,X_1,uid_0,uid_1))
+	# threads.append(Level_train_thread(config_instance,LogisticRegression(solver='lbfgs'),'level_one','log_move_lr_lbfgs',X_0,X_1,uid_0,uid_1))
+	# threads.append(Level_train_thread(config_instance,LogisticRegression(solver='liblinear'),'level_one','log_move_lr_liblinear',X_0,X_1,uid_0,uid_1))
 	
-	# threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=100,max_depth=8,min_samples_split=9),'level_one','log_move_rf100',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=200,max_depth=8,min_samples_split=9),'level_one','log_move_rf200',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=500,max_depth=8,min_samples_split=9),'level_one','log_move_rf500',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=1000,max_depth=8,min_samples_split=9),'level_one','log_move_rf1000',X_0,X_1,uid_0,uid_1))
+	#threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=100,max_depth=8,min_samples_split=9),'level_one','log_move_rf100',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=200,max_depth=8,min_samples_split=9),'level_one','log_move_rf200',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=500,max_depth=8,min_samples_split=9),'level_one','log_move_rf500',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,RandomForestClassifier(n_estimators=1000,max_depth=8,min_samples_split=9),'level_one','log_move_rf1000',X_0,X_1,uid_0,uid_1))
 
-	# threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=20,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt20',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=50,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt50',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=100,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt100',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=20,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt20',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=50,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt50',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,GradientBoostingClassifier(n_estimators=100,max_depth=8,min_samples_split=9,learning_rate=0.02,subsample=0.7),'level_one','log_move_gbdt100',X_0,X_1,uid_0,uid_1))
 
-	# threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=20,learning_rate=0.02),'level_one','log_move_ada20',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=50,learning_rate=0.02),'level_one','log_move_ada50',X_0,X_1,uid_0,uid_1))
-	# threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=100,learning_rate=0.02),'level_one','log_move_ada100',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=20,learning_rate=0.02),'level_one','log_move_ada20',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=50,learning_rate=0.02),'level_one','log_move_ada50',X_0,X_1,uid_0,uid_1))
+	threads.append(Level_train_thread(config_instance,AdaBoostClassifier(base_estimator=RandomForestClassifier(n_estimators=50,max_depth=8,min_samples_split=9),n_estimators=100,learning_rate=0.02),'level_one','log_move_ada100',X_0,X_1,uid_0,uid_1))
 
-	# params={
-	#     'booster':'gbtree',
-	#     'objective': 'binary:logistic',
-	#    	'scale_pos_weight':13458.0/(1400.0),
-	#     'eval_metric': 'auc',
-	#     'gamma':0,
-	#     'max_depth':8,
-	#     'lambda':700,
-	#     'subsample':0.7,
-	#     'colsample_bytree':0.3,
-	#     'min_child_weight':5,
-	#     'eta': 0.02,
-	#     'seed':1,
-	#     'nthread':8
-	#     }
-	# threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2000',X_0,X_1,uid_0,uid_1,params,2000))
-	# threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2500',X_0,X_1,uid_0,uid_1,params,2500))
-	# params={
-	#     'booster':'gbtree',
-	#     'objective': 'binary:logistic',
-	#    	'scale_pos_weight':13458.0/(1300.0),
-	#     'eval_metric': 'auc',
-	#     'gamma':0,
-	#     'max_depth':8,
-	#     'lambda':700,
-	#     'subsample':0.7,
-	#     'colsample_bytree':0.3,
-	#     'min_child_weight':5,
-	#     'eta': 0.02,
-	#     'seed':1,
-	#     'nthread':8
-	#     }
-	# threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2000_2',X_0,X_1,uid_0,uid_1,params,2000))
-	# threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2500_2',X_0,X_1,uid_0,uid_1,params,2500))
-
-	for thread in threads:
-		thread.start()
+	params={
+	    'booster':'gbtree',
+	    'objective': 'binary:logistic',
+	   	'scale_pos_weight':13458.0/(1400.0),
+	    'eval_metric': 'auc',
+	    'gamma':0,
+	    'max_depth':8,
+	    'lambda':700,
+	    'subsample':0.7,
+	    'colsample_bytree':0.3,
+	    'min_child_weight':5,
+	    'eta': 0.02,
+	    'seed':1,
+	    'nthread':8
+	    }
+	threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2000',X_0,X_1,uid_0,uid_1,params,2000))
+	threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2500',X_0,X_1,uid_0,uid_1,params,2500))
+	params={
+	    'booster':'gbtree',
+	    'objective': 'binary:logistic',
+	   	'scale_pos_weight':13458.0/(1300.0),
+	    'eval_metric': 'auc',
+	    'gamma':0,
+	    'max_depth':8,
+	    'lambda':700,
+	    'subsample':0.7,
+	    'colsample_bytree':0.3,
+	    'min_child_weight':5,
+	    'eta': 0.02,
+	    'seed':1,
+	    'nthread':8
+	    }
+	threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2000_2',X_0,X_1,uid_0,uid_1,params,2000))
+	threads.append(Xgb_level_train_thread(config_instance,'level_one','log_move_xgb2500_2',X_0,X_1,uid_0,uid_1,params,2500))
 
 	for thread in threads:
-		thread.join()
+		thread.run()
+
+	# for thread in threads:
+	# 	thread.join()
 
 #预测
 
