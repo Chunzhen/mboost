@@ -8,20 +8,18 @@ import pandas as pd
 from datetime import datetime
 import time
 
-import config
-
 class Load_data(object):
-	def __init__(self):
-		self.__scale=config.scale_level1
+	def __init__(self,config):
+		self.config=config
 
 	def features_type(self):
-		reader=pd.read_csv(config.path_feature_type,iterator=False,delimiter=',',encoding='utf-8')
+		reader=pd.read_csv(self.config.path_feature_type,iterator=False,delimiter=',',encoding='utf-8')
 		features=reader
 		return features
 
 	def train_X(self):
-		X=pd.read_csv(config.path_train_x,iterator=False,delimiter=',',encoding='utf-8',header=None)
-		uid=pd.read_csv(config.path_uid,iterator=False,delimiter=',',encoding='utf-8',header=None)
+		X=pd.read_csv(self.config.path_train_x,iterator=False,delimiter=',',encoding='utf-8',header=None)
+		uid=pd.read_csv(self.config.path_uid,iterator=False,delimiter=',',encoding='utf-8',header=None)
 		X=np.array(X,dtype="float32")
 		X=np.nan_to_num(X)
 		uid=np.array(uid)
@@ -29,7 +27,7 @@ class Load_data(object):
 		return X,uid
 
 	def train_y(self):
-		reader=pd.read_csv(config.path_train_y,iterator=False,delimiter=',',encoding='utf-8')
+		reader=pd.read_csv(self.config.path_train_y,iterator=False,delimiter=',',encoding='utf-8')
 		data=np.array(reader)
 		y=np.ravel(data[:,1:])
 		uid=np.array(data[:,0],dtype='str')
@@ -56,8 +54,8 @@ class Load_data(object):
 
 
 	def predict_X(self):
-		X=pd.read_csv(config.path_predict_x,iterator=False,delimiter=',',encoding='utf-8',header=None)
-		uid=pd.read_csv(config.path_uid,iterator=False,delimiter=',',encoding='utf-8',header=None)
+		X=pd.read_csv(self.config.path_predict_x,iterator=False,delimiter=',',encoding='utf-8',header=None)
+		uid=pd.read_csv(self.config.path_uid,iterator=False,delimiter=',',encoding='utf-8',header=None)
 		X=np.array(X,dtype="float32")
 		X=np.nan_to_num(X)
 		uid=np.array(uid).ravel()
