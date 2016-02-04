@@ -58,7 +58,12 @@ class Preprocessing(object):
 			X=self.min_max_scale(X)
 		elif self.config.scale_level1=='median':
 			X=self.fill_scale(X,self.median_feature(X))
-
+		elif self.config.scale_level1=='log_move_standard':
+			X=self.log_scale_move(X)
+			X=self.standard_scale(X)
+		elif self.config.scale_level1=='log_standard':
+			X=self.log_scale(X)
+			X=self.standard_scale(X)
 
 		uid=np.array(data[:,0],dtype='int')
 		uid=uid.astype('str')	
@@ -142,7 +147,8 @@ class Preprocessing(object):
 		return X
 
 def scale_wrapper():
-	scales=['log','log_move','standard','normalize','min_max','median']
+	#scales=['log','log_move','standard','normalize','min_max','median','log_move_standard']
+	scales=['log_standard']
 	threads=[]
 	for x in scales:
 		config_instance=Config(x)

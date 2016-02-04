@@ -72,14 +72,14 @@ class Mboost(object):
 			predicts.extend((y_pred[:,1]).tolist())
 			test_uids.extend(test_uid.tolist())
 
-			print auc_score
+			#print auc_score
 			scores.append(auc_score)
 
 		self.output_level_train(predicts,test_uids,scores,level,name)
-		print name+" average scores:",np.mean(scores)
+		#print name+" average scores:",np.mean(scores)
 		pass
 
-	def xgb_level_train(self,clf,level,name,X_0,X_1,uid_0,uid_1,params,round):
+	def xgb_level_train(self,level,name,X_0,X_1,uid_0,uid_1,params,round):
 		n_folds=self.config.n_folds
 		f0,f1=self.fold(len(X_0),len(X_1),n_folds)
 
@@ -119,11 +119,11 @@ class Mboost(object):
 			predicts.extend((y_pred).tolist())
 			test_uids.extend(test_uid.tolist())
 
-			print auc_score
+			#print auc_score
 			scores.append(auc_score)
 
 		self.output_level_train(predicts,test_uids,scores,level,name)
-		print name+" average scores:",np.mean(scores)
+		#print name+" average scores:",np.mean(scores)
 
 	def output_level_train(self,predicts,test_uids,scores,level,name):	
 		f1=open(self.config.path_train+level+'/'+name+'.csv','wb')
