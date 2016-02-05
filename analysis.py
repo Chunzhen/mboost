@@ -26,8 +26,8 @@ def rank_dict(output1):
 def analysis():
 	config_instance=config.Config('log_move')
 	output1=load_submit_file(config_instance.path_predict+'output/'+"1-15-3-blend.csv")
-	level='level_one'
-	name='log_move_lr_sag'
+	level='level_two'
+	name='log_move_lr_sag2'
 	output2=load_submit_file(config_instance.path_predict+'output/'+level+'_'+name+'.csv')#origin_xgb2500_log
 	#output2=load_submit_file(config_instance.path_predict+'output/'+"1-4-1-blend.csv")
 	dict1=rank_dict(output1)
@@ -58,7 +58,7 @@ def transform_predict(config,level,name):
 
 def main():
 	#config_instance=config.Config('log_move')
-	#transform_predict(config_instance,'level_one','log_move_lr_sag')
+	#transform_predict(config_instance,'level_two','log_move_lr_sag2')
 	analysis()
 	pass
 

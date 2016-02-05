@@ -15,6 +15,7 @@ import threading
 import preprocessing
 import load_data
 import load_train_data
+import load_predict_data
 import mboost
 
 from sklearn.tree import DecisionTreeClassifier
@@ -384,38 +385,42 @@ def level_two_predict():
 	config_instance=Config('log_move')
 	level='level_two'
 	clf_name=[
-		'log_move_lr_sag',
-		'log_move_lr_newton',
-		'log_move_lr_lbfgs',
-		'log_move_lr_liblinear',
-		'log_move_rf100',
-		'log_move_rf200',
-		'log_move_rf500',
-		'log_move_rf1000',
-		'log_move_gbdt20',
-		'log_move_gbdt50',
-		'log_move_gbdt100',
-		'log_move_ada20',
-		'log_move_ada50',
-		'log_move_ada100',
+		# 'log_move_lr_sag',
+		# 'log_move_lr_newton',
+		# 'log_move_lr_lbfgs',
+		# 'log_move_lr_liblinear',
+		# 'log_move_rf100',
+		# 'log_move_rf200',
+		# 'log_move_rf500',
+		# 'log_move_rf1000',
+		# 'log_move_gbdt20',
+		# 'log_move_gbdt50',
+		# 'log_move_gbdt100',
+		# 'log_move_ada20',
+		# 'log_move_ada50',
+		# 'log_move_ada100',
 		'log_move_xgb2000',
 		'log_move_xgb2500',
 		'log_move_xgb2000_2',
 		'log_move_xgb2500_2'
 	]
 	load_data_instance=load_train_data.Load_train_data(config_instance,'level_one',clf_name)
+	predict_data_instance=load_predict_data.Load_predict_data(config_instance,'level_one',clf_name)
 	X_0,X_1,uid_0,uid_1=load_data_instance.level_data()
-	
-	threads=[]
-	threads.append(Level_predict_thread(config_instance,LogisticRegression(solver='sag'),level,'log_move_lr_sag',X_0,X_1,uid_0,uid_1))
+	predict_X,predict_uid=predict_data_instance.level_data()
 
+	threads=[]
+	threads.append(Level_predict_thread(config_instance,LogisticRegression(solver='sag'),level,'log_move_lr_sag2',X_0,X_1,predict_X,predict_uid))
+	for thread in threads:
+		thread.run()
 	pass
 
 def main():
 	#level_one_wrapper()
 	#level_two_wrapper()
 	#level_three_train()
-	level_one_predict()
+	#level_one_predict()
+	level_two_predict()
 
 if __name__ == '__main__':
 	reload(sys)

@@ -41,3 +41,17 @@ Fri, 05 Feb 2016 14:30:10 run.py[line:131] INFO Begin train log_move_xgb2000_2
 Fri, 05 Feb 2016 14:39:10 run.py[line:136] INFO End train log_move_xgb2000_2, cost time: 9.0min / 540.0s
 Fri, 05 Feb 2016 14:39:10 run.py[line:131] INFO Begin train log_move_xgb2500_2
 Fri, 05 Feb 2016 14:50:07 run.py[line:136] INFO End train log_move_xgb2500_2, cost time: 10.9333333333min / 656.0s
+Fri, 05 Feb 2016 18:45:45 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 18:46:31 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 18:55:38 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 23:28:42 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 23:31:02 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 23:32:24 run.py[line:35] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 23:32:38 run.py[line:111] INFO Begin train log_move_lr_sag
+Fri, 05 Feb 2016 23:32:38 run.py[line:116] INFO End train log_move_lr_sag, cost time: 0.0min / 0.0s
+Sat, 06 Feb 2016 01:49:26 run.py[line:35] INFO **********************************New Train**********************************
+Sat, 06 Feb 2016 01:49:32 run.py[line:111] INFO Begin train log_move_lr_sag
+Sat, 06 Feb 2016 01:49:32 run.py[line:116] INFO End train log_move_lr_sag, cost time: 0.0min / 0.0s
+Sat, 06 Feb 2016 01:51:26 run.py[line:35] INFO **********************************New Train**********************************
+Sat, 06 Feb 2016 01:51:32 run.py[line:111] INFO Begin train log_move_lr_sag2
+Sat, 06 Feb 2016 01:51:32 run.py[line:116] INFO End train log_move_lr_sag2, cost time: 0.0min / 0.0s
