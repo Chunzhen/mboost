@@ -10,21 +10,21 @@ import time
 import load_data
 from config import Config
 
-class Load_train_data(object):
+class Load_predict_data(object):
 	def __init__(self,config,level,clf_name):
 		self.config=config
 		self.level=level
 		self.__clf_name=clf_name
 
 	def load_clf_file(self,level,name):
-		reader=pd.read_csv(self.config.path_train+level+'/'+name+'.csv',iterator=False,delimiter=',',encoding='utf-8',header=None)
+		reader=pd.read_csv(self.config.path_predict+level+'/'+name+'.csv',iterator=False,delimiter=',',encoding='utf-8',header=None)
 		d={}
 		for i in range(len(reader[0])):
 			d[str(reader[0][i])]=reader[1][i]
 		return d
 
 	def load_clf_score(self,level,name):
-		reader=pd.read_csv(self.config.path_train+level+'/'+name+'_score.csv',iterator=False,delimiter=',',encoding='utf-8',header=None)
+		reader=pd.read_csv(self.config.path_predict+level+'/'+name+'_score.csv',iterator=False,delimiter=',',encoding='utf-8',header=None)
 		return np.mean(reader[0])
 
 	def level_data(self):

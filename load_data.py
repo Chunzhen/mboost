@@ -60,8 +60,8 @@ class Load_data(object):
 		X=np.nan_to_num(X)
 		uid=np.array(uid).ravel()
 		#print X.shape
-		train_reader=pd.read_csv('data/train_x.csv',iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
-		test_reader=pd.read_csv('data/test_x.csv',iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
+		train_reader=pd.read_csv(self.config.path_origin_train_x,iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
+		test_reader=pd.read_csv(self.config.path_origin_predict_x,iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
 		len_train=len(train_reader)
 		len_predict=len(test_reader)
 		return X,uid[len_train:(len_train+len_predict)]

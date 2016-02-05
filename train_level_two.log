@@ -1,0 +1,45 @@
+Fri, 05 Feb 2016 11:48:10 run.py[line:34] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 11:49:29 run.py[line:34] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 11:50:01 run.py[line:34] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 11:50:10 run.py[line:69] INFO Begin train log_move_lr_sag
+Fri, 05 Feb 2016 11:50:10 run.py[line:74] INFO End train log_move_lr_sag, cost time: 0.0min / 0.0s
+Fri, 05 Feb 2016 11:54:11 run.py[line:34] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 11:54:19 run.py[line:69] INFO Begin train log_move_lr_sag
+Fri, 05 Feb 2016 11:54:19 run.py[line:74] INFO End train log_move_lr_sag, cost time: 0.0min / 0.0s
+Fri, 05 Feb 2016 11:54:19 run.py[line:69] INFO Begin train log_move_lr_newton
+Fri, 05 Feb 2016 11:54:20 run.py[line:74] INFO End train log_move_lr_newton, cost time: 0.0min / 0.0s
+Fri, 05 Feb 2016 11:54:20 run.py[line:69] INFO Begin train log_move_lr_lbfgs
+Fri, 05 Feb 2016 11:54:20 run.py[line:74] INFO End train log_move_lr_lbfgs, cost time: 0.0min / 0.0s
+Fri, 05 Feb 2016 11:54:20 run.py[line:69] INFO Begin train log_move_lr_liblinear
+Fri, 05 Feb 2016 11:54:20 run.py[line:74] INFO End train log_move_lr_liblinear, cost time: 0.0min / 0.0s
+Fri, 05 Feb 2016 11:54:20 run.py[line:69] INFO Begin train log_move_rf100
+Fri, 05 Feb 2016 11:54:29 run.py[line:74] INFO End train log_move_rf100, cost time: 0.133333333333min / 8.0s
+Fri, 05 Feb 2016 11:54:29 run.py[line:69] INFO Begin train log_move_rf200
+Fri, 05 Feb 2016 11:54:45 run.py[line:74] INFO End train log_move_rf200, cost time: 0.266666666667min / 16.0s
+Fri, 05 Feb 2016 11:54:45 run.py[line:69] INFO Begin train log_move_rf500
+Fri, 05 Feb 2016 11:55:26 run.py[line:74] INFO End train log_move_rf500, cost time: 0.666666666667min / 40.0s
+Fri, 05 Feb 2016 11:55:26 run.py[line:69] INFO Begin train log_move_rf1000
+Fri, 05 Feb 2016 11:56:48 run.py[line:74] INFO End train log_move_rf1000, cost time: 1.35min / 81.0s
+Fri, 05 Feb 2016 11:56:48 run.py[line:69] INFO Begin train log_move_gbdt20
+Fri, 05 Feb 2016 11:56:52 run.py[line:74] INFO End train log_move_gbdt20, cost time: 0.0666666666667min / 4.0s
+Fri, 05 Feb 2016 11:56:52 run.py[line:69] INFO Begin train log_move_gbdt50
+Fri, 05 Feb 2016 11:57:02 run.py[line:74] INFO End train log_move_gbdt50, cost time: 0.166666666667min / 10.0s
+Fri, 05 Feb 2016 11:57:02 run.py[line:69] INFO Begin train log_move_gbdt100
+Fri, 05 Feb 2016 11:57:23 run.py[line:74] INFO End train log_move_gbdt100, cost time: 0.333333333333min / 20.0s
+Fri, 05 Feb 2016 11:57:23 run.py[line:69] INFO Begin train log_move_ada20
+Fri, 05 Feb 2016 11:58:50 run.py[line:74] INFO End train log_move_ada20, cost time: 1.43333333333min / 86.0s
+Fri, 05 Feb 2016 11:58:50 run.py[line:69] INFO Begin train log_move_ada50
+Fri, 05 Feb 2016 12:02:29 run.py[line:74] INFO End train log_move_ada50, cost time: 3.63333333333min / 218.0s
+Fri, 05 Feb 2016 12:02:29 run.py[line:69] INFO Begin train log_move_ada100
+Fri, 05 Feb 2016 12:09:38 run.py[line:74] INFO End train log_move_ada100, cost time: 7.15min / 429.0s
+Fri, 05 Feb 2016 12:09:38 run.py[line:90] INFO Begin train log_move_xgb2000
+Fri, 05 Feb 2016 12:10:57 run.py[line:95] INFO End train log_move_xgb2000, cost time: 1.31666666667min / 79.0s
+Fri, 05 Feb 2016 12:10:57 run.py[line:90] INFO Begin train log_move_xgb2500
+Fri, 05 Feb 2016 12:12:06 run.py[line:95] INFO End train log_move_xgb2500, cost time: 1.13333333333min / 68.0s
+Fri, 05 Feb 2016 12:12:06 run.py[line:90] INFO Begin train log_move_xgb2000_2
+Fri, 05 Feb 2016 12:13:13 run.py[line:95] INFO End train log_move_xgb2000_2, cost time: 1.1min / 66.0s
+Fri, 05 Feb 2016 12:13:13 run.py[line:90] INFO Begin train log_move_xgb2500_2
+Fri, 05 Feb 2016 12:14:53 run.py[line:95] INFO End train log_move_xgb2500_2, cost time: 1.65min / 99.0s
+Fri, 05 Feb 2016 12:22:18 run.py[line:34] INFO **********************************New Train**********************************
+Fri, 05 Feb 2016 12:22:26 run.py[line:69] INFO Begin train log_move_lr_sag
+Fri, 05 Feb 2016 12:22:26 run.py[line:74] INFO End train log_move_lr_sag, cost time: 0.0min / 0.0s

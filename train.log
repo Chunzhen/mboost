@@ -35,3 +35,12 @@ Thu, 04 Feb 2016 23:53:30 run.py[line:73] INFO End train log_move_ada20, cost ti
 Thu, 04 Feb 2016 23:53:30 run.py[line:68] INFO Begin train log_move_ada50
 Fri, 05 Feb 2016 00:13:35 run.py[line:73] INFO End train log_move_ada50, cost time: 20.0666666667min / 1204.0s
 Fri, 05 Feb 2016 00:13:35 run.py[line:68] INFO Begin train log_move_ada100
+Fri, 05 Feb 2016 00:53:35 run.py[line:73] INFO End train log_move_ada100, cost time: 40.0min / 2400.0s
+Fri, 05 Feb 2016 00:53:35 run.py[line:89] INFO Begin train log_move_xgb2000
+Fri, 05 Feb 2016 01:26:35 run.py[line:94] INFO End train log_move_xgb2000, cost time: 32.9833333333min / 1979.0s
+Fri, 05 Feb 2016 01:26:35 run.py[line:89] INFO Begin train log_move_xgb2500
+Fri, 05 Feb 2016 02:07:53 run.py[line:94] INFO End train log_move_xgb2500, cost time: 41.2833333333min / 2477.0s
+Fri, 05 Feb 2016 02:07:53 run.py[line:89] INFO Begin train log_move_xgb2000_2
+Fri, 05 Feb 2016 02:41:13 run.py[line:94] INFO End train log_move_xgb2000_2, cost time: 33.3166666667min / 1999.0s
+Fri, 05 Feb 2016 02:41:13 run.py[line:89] INFO Begin train log_move_xgb2500_2
+Fri, 05 Feb 2016 03:22:20 run.py[line:94] INFO End train log_move_xgb2500_2, cost time: 41.1166666667min / 2467.0s

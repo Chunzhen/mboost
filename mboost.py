@@ -163,7 +163,7 @@ class Mboost(object):
 		end=datetime.now()
 		print "finish predict:"+name+" Run time:"+str(float((end-start).seconds)/60.0)+"min / "+str(float((end-start).seconds))+"s"
 
-	def output_level_predict(predicts,test_uids,level,name):	
+	def output_level_predict(self,predicts,test_uids,level,name):	
 		f1=open(self.config.path_predict+level+'/'+name+'.csv','wb')
 		f1.write('"uid","score"\n')
 		for i in range(len(test_uids)):
