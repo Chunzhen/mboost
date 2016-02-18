@@ -7,6 +7,9 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 import time
+import config
+
+from sklearn.cross_validation import train_test_split
 
 class Load_data(object):
 	def __init__(self,config):
@@ -52,23 +55,27 @@ class Load_data(object):
 				uid_0.append(uid[i])
 		return np.array(X_0),np.array(X_1),np.array(uid_0),np.array(uid_1)
 
+	def train_test_xy(self,random_state):
+		X_0,X_1,uid_0,uid_1=self.train_xy()
+		train_X_0,test_X_0,train_uid_0,test_uid_0=train_test_split(X_0,uid_0,test_size=0.2,random_state=random_state)
+		train_X_1,test_X_1,train_uid_1,test_uid_1=train_test_split(X_1,uid_1,test_size=0.2,random_state=random_state)
+		return train_X_0,test_X_0,train_X_1,test_X_1,train_uid_0,test_uid_0,train_uid_1,test_uid_1
 
 	def predict_X(self):
 		X=pd.read_csv(self.config.path_predict_x,iterator=False,delimiter=',',encoding='utf-8',header=None)
-		uid=pd.read_csv(self.config.path_uid,iterator=False,delimiter=',',encoding='utf-8',header=None)
-		X=np.array(X,dtype="float32")
-		X=np.nan_to_num(X)
-		uid=np.array(uid).ravel()
-		#print X.shape
-		train_reader=pd.read_csv(self.config.path_origin_train_x,iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
+		X=np.array(X)
+
 		test_reader=pd.read_csv(self.config.path_origin_predict_x,iterator=False,delimiter=',',usecols=tuple(['uid']),encoding='utf-8')
-		len_train=len(train_reader)
-		len_predict=len(test_reader)
-		return X,uid[len_train:(len_train+len_predict)]
+		uid=np.array(test_reader).ravel()
+		return X,uid
 
 
 def main():
-
+	config_instance=config.Config('log_move')
+	load_data_instance=Load_data(config_instance)
+	#predict_X,uid=load_data_instance.predict_X()
+	train_X_0,test_X_0,train_X_1,test_X_1,train_uid_0,test_uid_0,train_uid_1,test_uid_1=load_data_instance.train_test_xy(1)
+	print len(train_uid_0)+len(test_uid_0)+len(train_uid_1)+len(test_uid_1)
 	pass
 
 if __name__ == '__main__':

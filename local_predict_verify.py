@@ -10,7 +10,10 @@ import time
 import load_data
 from config import Config
 
-class Load_predict_data(object):
+from sklearn import metrics
+from sklearn.metrics import roc_curve, auc
+
+class Local_predict_verify(object):
 	def __init__(self,config,level,clf_name):
 		self.config=config
 		self.level=level
@@ -27,58 +30,58 @@ class Load_predict_data(object):
 		level=self.level
 		clf_name=self.__clf_name
 		load_data_instance=load_data.Load_data(self.config)
-		predict_X,uids=load_data_instance.predict_X()
 		X_0,test_X_0,X_1,test_X_1,uid_0,test_uid_0,uid_1,test_uid_1=load_data_instance.train_test_xy(1)
-		#predict_X=np.vstack((test_X_0,test_X_1))
-		#predict_uid=np.hstack((test_uid_0,test_uid_1))
-		#uids=predict_uid.astype('int')
+		predict_X,uids=load_data_instance.predict_X()
 
 		d={}
+		test_uid_0=test_uid_0.astype('int').tolist()
+		test_uid_1=test_uid_1.astype('int').tolist()
+		#print test_uid_0
+		#return
+
 		for name in clf_name:
+			prob=[]
+			real=[]
 			column_dict=self.load_clf_file(level,name)
-			for uid in uids:
-				temp=d.get(uid,[])
-				temp.append(column_dict[uid])
-				d[uid]=temp
-		
-		X=[]
+			for uid,score in column_dict.items():
+				prob.append(score)
+				if uid in test_uid_0:
+					real.append(0)
+				elif uid in test_uid_1:
+					real.append(1)
+				else:
+					print "error"
 
-		for i in range(len(uids)):
-			X.append(d[uids[i]])
+			auc_score=metrics.roc_auc_score(real,prob)
+			print name,"  "," auc:",auc_score	
 
-		# print X[0]
-		# print uids[0]
-		# print X[1]
-		# print uids[1]
-		#X=np.hstack((predict_X,np.array(X)))
-		return np.array(X),np.array(uids)
 
 def main():
 	config_instance=Config('log_move')
-	level='level_two'
+	level='level_one'
 	clf_name=[
 		'log_move_lr_sag',
 		'log_move_lr_newton',
 		'log_move_lr_lbfgs',
 		'log_move_lr_liblinear',
-		# 'log_move_rf100',
-		# 'log_move_rf200',
-		# 'log_move_rf500',
-		# 'log_move_rf1000',
-		# 'log_move_gbdt20',
-		# 'log_move_gbdt50',
-		# 'log_move_gbdt100',
-		# 'log_move_ada20',
-		# 'log_move_ada50',
-		# 'log_move_ada100',
-		# 'log_move_xgb2000',
-		# 'log_move_xgb2500',
-		# 'log_move_xgb2000_2',
-		# 'log_move_xgb2500_2'
+		'log_move_rf100',
+		'log_move_rf200',
+		'log_move_rf500',
+		'log_move_rf1000',
+		'log_move_gbdt20',
+		'log_move_gbdt50',
+		'log_move_gbdt100',
+		'log_move_ada20',
+		'log_move_ada50',
+		'log_move_ada100',
+		'log_move_xgb2000',
+		'log_move_xgb2500',
+		'log_move_xgb2000_2',
+		'log_move_xgb2500_2'
+
 	]
-	predict_data_instance=Load_predict_data(config_instance,'level_one',clf_name)
-	predict_X,predict_uid=predict_data_instance.level_data()
-	print predict_X
+	predict_data_instance=Local_predict_verify(config_instance,level,clf_name)
+	predict_data_instance.level_data()
 	pass
 
 if __name__ == '__main__':

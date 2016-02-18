@@ -20,7 +20,7 @@ class Config(object):
 		self.path_uid=self.path+'data/uid.csv'
 
 		#fold random_state
-		self.fold_random_state=171
+		self.fold_random_state=171#171
 		self.n_folds=5
 
 		self.path_train=self.path+'train/'

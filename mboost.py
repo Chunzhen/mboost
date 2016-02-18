@@ -9,6 +9,7 @@ import time
 
 import load_data
 import load_train_data
+import load_predict_data
 import copy
 
 from config import Config
@@ -76,8 +77,7 @@ class Mboost(object):
 			scores.append(auc_score)
 
 		self.output_level_train(predicts,test_uids,scores,level,name)
-		#print name+" average scores:",np.mean(scores)
-		pass
+		print name+" average scores:",np.mean(scores)
 
 	def xgb_level_train(self,level,name,X_0,X_1,uid_0,uid_1,params,round):
 		n_folds=self.config.n_folds
@@ -139,8 +139,8 @@ class Mboost(object):
 
 	def level_predict(self,clf,level,name,X_0,X_1,predict_X,predict_uid):
 		start=datetime.now()
-		x_train=np.vstack((X_0,X_1))
-		y_train=np.hstack((np.zeros(len(X_0)),np.ones(len(X_1))))
+		x_train=np.vstack((X_1,X_0))
+		y_train=np.hstack((np.ones(len(X_1)),np.zeros(len(X_0))))
 
 		clf.fit(x_train,y_train)
 
@@ -151,8 +151,8 @@ class Mboost(object):
 
 	def xgb_predict(self,level,name,X_0,X_1,predict_X,predict_uid,params,round):
 		start=datetime.now()
-		x_train=np.vstack((X_0,X_1))
-		y_train=np.hstack((np.zeros(len(X_0)),np.ones(len(X_1))))
+		x_train=np.vstack((X_1,X_0))
+		y_train=np.hstack((np.ones(len(X_1)),np.zeros(len(X_0))))
 		dtrain=xgb.DMatrix(x_train,label=y_train)
 		watchlist=[(dtrain,'train')]
 		model=xgb.train(params,dtrain,num_boost_round=round,evals=watchlist,verbose_eval=False)
