@@ -30,10 +30,9 @@ def score_dict(path):
 		output_dict1[str(reader['uid'][i])]=reader['score'][i]
 	return output_dict1
 
-
 def output_blend(d,path):
 	f=open(path,'wb')
-	f.write('uid,score\n')
+	f.write('"uid","score"\n')
 	for uid,score in d.items():
 		f.write(str(uid)+','+str(score)+'\n')
 	f.close()
@@ -42,28 +41,38 @@ def analysis():
 	config_instance=config.Config('log_move')
 	output1=load_submit_file(config_instance.path_predict+'output/'+"1-15-3-blend.csv")#
 	level='level_two'
-	name='log_move_xgb2500'
-	output1=load_submit_file(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
-	#output2=load_submit_file(config_instance.path_predict+level+'/'+name+'.csv')
+	name='log_move_lr_sag'
+	#output1=load_submit_file(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
+	#output1=load_submit_file(config_instance.path_predict+'output/blend2.csv')
 	output2=load_submit_file(config_instance.path_predict+'output/'+"best.csv")#origin_xgb2500_log
 	dict1=rank_dict(output1)
 	dict2=rank_dict(output2)
 
 	score_dict1=score_dict(config_instance.path_predict+'output/'+"best.csv")
-	score_dict2=score_dict(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
+	score_dict2=score_dict(config_instance.path_predict+'output/'+"1-15-3-blend.csv")
+	max_1=max(score_dict1.values())
+	max_2=max(score_dict2.values())
+
+	min_1=min(score_dict1.values())
+	min_2=min(score_dict2.values())
+
+	print max_1
+	print max_2
+	print min_1
+	print min_2
 	blend_dict={}
 	for uid,score in score_dict1.items():
-		blend_dict[uid]=score+score_dict2[uid]
+		blend_dict[uid]=(score-min_1)/(max_1-min_1)+(score_dict2[uid]-min_2)/(max_2-min_2)
 
-	#output_blend(blend_dict,config_instance.path_predict+'output/'+"blend.csv")
+	output_blend(blend_dict,config_instance.path_predict+'output/'+"blend3.csv")
 	rank_change=[]
 	uids=sorted(output1)
 	for uid in uids:
 		rank1=dict1.get(str(uid))
 		rank2=dict2.get(str(uid))
 		rank_change.append(int(rank1)-int(rank2))
-		if rank2<100:
-			print "uid:",uid,"  rank1:",rank1,"  rank2:",rank2,"  diff:",(rank1-rank2)
+		#if rank2<100:
+			#print "uid:",uid,"  rank1:",rank1,"  rank2:",rank2,"  diff:",(rank1-rank2)
 
 	print "var:",np.var(rank_change)," max:",np.max(rank_change)," min:",np.min(rank_change)
 	pass
@@ -82,7 +91,7 @@ def transform_predict(config,level,name):
 
 def main():
 	config_instance=config.Config('log_move')
-	#transform_predict(config_instance,'level_two','log_move_xgb2500')
+	#transform_predict(config_instance,'level_two','log_move_lr_sag')
 	analysis()
 	pass
 

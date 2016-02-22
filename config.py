@@ -23,7 +23,7 @@ class Config(object):
 		self.fold_random_state=171#171
 		self.n_folds=5
 
-		self.path_train=self.path+'train/'
+		self.path_train=self.path+'train_local/'
 		self.path_predict=self.path+'predict/'
 
 	def init_path(self):

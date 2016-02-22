@@ -27,11 +27,11 @@ class Load_predict_data(object):
 		level=self.level
 		clf_name=self.__clf_name
 		load_data_instance=load_data.Load_data(self.config)
-		predict_X,uids=load_data_instance.predict_X()
+		#predict_X,uids=load_data_instance.predict_X()
 		X_0,test_X_0,X_1,test_X_1,uid_0,test_uid_0,uid_1,test_uid_1=load_data_instance.train_test_xy(1)
-		#predict_X=np.vstack((test_X_0,test_X_1))
-		#predict_uid=np.hstack((test_uid_0,test_uid_1))
-		#uids=predict_uid.astype('int')
+		predict_X=np.vstack((test_X_0,test_X_1))
+		predict_uid=np.hstack((test_uid_0,test_uid_1))
+		uids=predict_uid.astype('int')
 
 		d={}
 		for name in clf_name:

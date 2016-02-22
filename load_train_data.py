@@ -33,13 +33,13 @@ class Load_train_data(object):
 		level=self.level
 		clf_name=self.__clf_name
 		load_data_instance=load_data.Load_data(self.config)
-		y,uids=load_data_instance.train_y()
-		X_00,X_11,uid_00,uid_11=load_data_instance.train_xy()
+		#y,uids=load_data_instance.train_y()
+		#X_00,X_11,uid_00,uid_11=load_data_instance.train_xy()
 
-		#X_00,test_X_00,X_11,test_X_11,uid_00,test_uid_00,uid_11,test_uid_11=load_data_instance.train_test_xy(1)
-		#uids=np.hstack((uid_00,uid_11))
-		#print len(uids)+len(test_uid_00)+len(test_uid_11)
-		#y=np.hstack((np.ones(len(X_00)),np.zeros(len(X_11))))
+		X_00,test_X_00,X_11,test_X_11,uid_00,test_uid_00,uid_11,test_uid_11=load_data_instance.train_test_xy(1)
+		uids=np.hstack((uid_00,uid_11))
+		print len(uids)+len(test_uid_00)+len(test_uid_11)
+		y=np.hstack((np.ones(len(X_00)),np.zeros(len(X_11))))
 
 		column_important=[]
 		d={}
@@ -55,6 +55,10 @@ class Load_train_data(object):
 				temp.append(column_dict[uid])
 				d[uid]=temp
 		
+		# ranks=self.level_ranks()
+		# for uid in uids:
+		# 	d[uid].extend(ranks[uid])
+
 		X_0=[]
 		X_1=[]
 		uid_0=[]
@@ -70,7 +74,7 @@ class Load_train_data(object):
 
 
 		#print column_important
-		# print len(X_0)
+		print np.array(X_0).shape
 		# print len(X_00)
 		# return 
 		# print uid_0[0]
@@ -80,37 +84,86 @@ class Load_train_data(object):
 		#X_1=np.hstack((X_11,np.array(X_1)))
 		return np.array(X_0),np.array(X_1),np.array(uid_0),np.array(uid_1)
 
-	# def train_test_xy(self,random_state):
-	# 	X_0,X_1,uid_0,uid_1=self.level_data()
-	# 	train_X_0,test_X_0,train_uid_0,test_uid_0=train_test_split(X_0,uid_0,test_size=0.2,random_state=random_state)
-	# 	train_X_1,test_X_1,train_uid_1,test_uid_1=train_test_split(X_1,uid_1,test_size=0.2,random_state=random_state)
-	# 	return train_X_0,test_X_0,train_X_1,test_X_1,train_uid_0,test_uid_0,train_uid_1,test_uid_1
+	def level_ranks(self):
+		level=self.level
+		ftype='log_move'
+		clf_name=[
+			ftype+'_lr_sag',
+			ftype+'_lr_newton',
+			ftype+'_lr_lbfgs',
+			ftype+'_lr_liblinear',
+			ftype+'_rf100',
+			ftype+'_rf200',
+			ftype+'_rf500',
+			ftype+'_rf1000',
+			ftype+'_gbdt20',
+			ftype+'_gbdt50',
+			ftype+'_gbdt100',
+			ftype+'_ada20',
+			ftype+'_ada50',
+			ftype+'_ada100',
+		]
+
+		ranks={}
+		column_dict_out=self.load_clf_file(level,ftype+'_xgb2500_2')
+		column_dict2_out=sorted(column_dict_out.items(),key=lambda d:d[1])
+		rank_out={}
+		i=1
+		for uid,score in column_dict2_out:
+			rank_out[uid]=i
+			i+=1
+
+		for name in clf_name:
+			column_dict=self.load_clf_file(level,name)
+			column_dict2=sorted(column_dict.items(),key=lambda d:d[1])
+			i=0
+
+			for uid, score in column_dict2:
+				rank=ranks.get(uid,[])
+				rank.append(float(i)/rank_out[uid])
+				ranks[uid]=rank
+				i+=1
+
+		return ranks
+		#self.output_rank(ranks,self.config.path_train+level+'/'+'ranks'+'.csv')
+
+	def output_rank(self,ranks,path):
+		f=open(path,'wb')
+		for uid,rank in ranks.items():
+			f.write(str(uid))
+			for r in rank:
+				f.write(','+str(r))
+			f.write('\n')
+		f.close()
+
 
 def  main():
-	config_instance=Config('log_move')
-	level='level_two'
+	ftype='log_move'
+	config_instance=Config(ftype)
+	level='level_one'
 	clf_name=[
-		'log_move_lr_sag',
-		'log_move_lr_newton',
-		'log_move_lr_lbfgs',
-		'log_move_lr_liblinear',
-		'log_move_rf100',
-		'log_move_rf200',
-		'log_move_rf500',
-		'log_move_rf1000',
-		'log_move_gbdt20',
-		'log_move_gbdt50',
-		'log_move_gbdt100',
-		'log_move_ada20',
-		'log_move_ada50',
-		'log_move_ada100',
-		'log_move_xgb2000',
-		'log_move_xgb2500',
-		'log_move_xgb2000_2',
-		'log_move_xgb2500_2'
+		ftype+'_lr_sag',
+		ftype+'_lr_newton',
+		ftype+'_lr_lbfgs',
+		ftype+'_lr_liblinear',
+		ftype+'_rf100',
+		ftype+'_rf200',
+		ftype+'_rf500',
+		ftype+'_rf1000',
+		ftype+'_gbdt20',
+		ftype+'_gbdt50',
+		ftype+'_gbdt100',
+		ftype+'_ada20',
+		ftype+'_ada50',
+		ftype+'_ada100',
+		ftype+'_xgb2000',
+		ftype+'_xgb2500',
+		ftype+'_xgb2000_2',
+		ftype+'_xgb2500_2'
 	]
-	load_data_instance=Load_train_data(config_instance,'level_two',clf_name)
+	load_data_instance=Load_train_data(config_instance,level,clf_name)
 	X_0,X_1,uid_0,uid_1=load_data_instance.level_data()
+	#load_data_instance.level_ranks()
 	pass
 
 if __name__ == '__main__':

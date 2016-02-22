@@ -123,7 +123,7 @@ class Mboost(object):
 			scores.append(auc_score)
 
 		self.output_level_train(predicts,test_uids,scores,level,name)
-		#print name+" average scores:",np.mean(scores)
+		print name+" average scores:",np.mean(scores)
 
 	def output_level_train(self,predicts,test_uids,scores,level,name):	
 		f1=open(self.config.path_train+level+'/'+name+'.csv','wb')
