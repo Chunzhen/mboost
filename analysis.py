@@ -40,16 +40,18 @@ def output_blend(d,path):
 def analysis():
 	config_instance=config.Config('log_move')
 	output1=load_submit_file(config_instance.path_predict+'output/'+"1-15-3-blend.csv")#
-	level='level_two'
-	name='log_move_lr_sag'
-	#output1=load_submit_file(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
+	level='level_one'
+	name='log_move_xgb2500'
+	output2=load_submit_file(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
 	#output1=load_submit_file(config_instance.path_predict+'output/blend2.csv')
-	output2=load_submit_file(config_instance.path_predict+'output/'+"best.csv")#origin_xgb2500_log
+	#output2=load_submit_file(config_instance.path_predict+'output/'+"best.csv")#origin_xgb2500_log
 	dict1=rank_dict(output1)
 	dict2=rank_dict(output2)
 
 	score_dict1=score_dict(config_instance.path_predict+'output/'+"best.csv")
-	score_dict2=score_dict(config_instance.path_predict+'output/'+"1-15-3-blend.csv")
+	level='level_two'
+	name='log_move_lr_sag'
+	score_dict2=score_dict(config_instance.path_predict+'output/'+level+'_'+name+'.csv')
 	max_1=max(score_dict1.values())
 	max_2=max(score_dict2.values())
 
@@ -62,9 +64,12 @@ def analysis():
 	print min_2
 	blend_dict={}
 	for uid,score in score_dict1.items():
-		blend_dict[uid]=(score-min_1)/(max_1-min_1)+(score_dict2[uid]-min_2)/(max_2-min_2)
+		if score==1 or score==0:
+			blend_dict[uid]=score
+		else:
+			blend_dict[uid]=(0.73*8*(score-min_1)/(max_1-min_1)+0.71*(score_dict2[uid]-min_2)/(max_2-min_2))/(0.73*8+0.71)
 
-	output_blend(blend_dict,config_instance.path_predict+'output/'+"blend3.csv")
+	output_blend(blend_dict,config_instance.path_predict+'output/'+"blend_8.csv")
 	rank_change=[]
 	uids=sorted(output1)
 	for uid in uids:
@@ -91,8 +96,8 @@ def transform_predict(config,level,name):
 
 def main():
 	config_instance=config.Config('log_move')
-	#transform_predict(config_instance,'level_two','log_move_lr_sag')
-	analysis()
+	transform_predict(config_instance,'level_two','log_move_lr_sag2')
+	#analysis()
 	pass
 
 if __name__ == '__main__':

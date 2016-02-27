@@ -20,11 +20,13 @@ class Config(object):
 		self.path_uid=self.path+'data/uid.csv'
 
 		#fold random_state
-		self.fold_random_state=171#171
+		self.fold_random_state=7#171
 		self.n_folds=5
 
 		self.path_train=self.path+'train_local/'
 		self.path_predict=self.path+'predict/'
+
+		self.path_cor=self.path+'statistic/cor_log.csv'
 
 	def init_path(self):
 		paths=[self.path_train,self.path_predict,self.path_train+'level_one/',self.path_train+'level_two/']

@@ -25,16 +25,28 @@ class Preprocessing(object):
 		features=reader
 		return features
 
+	def load_cor_feature(self):
+		reader=pd.read_csv(self.config.path_cor,iterator=False,delimiter=',',encoding='utf-8',header=None)
+		cor_features=set([])
+		for i in range(len(reader[0])):
+			if abs(reader[1][i])>=0.01:
+				cor_features.add(reader[0][i])
+
+		print 'cor_features:',len(cor_features)
+		return cor_features
+
 	def scale_X(self):
 		types=self.features_type()
 		use=['uid']
 		category_use=[]
+		cor_features=self.load_cor_feature()
 
 		for i,t in enumerate(types['type']):
 			if t=='category':
 				category_use.append(types['feature'][i])
 			else:
-				use.append(types['feature'][i])
+				if types['feature'][i] in cor_features:
+					use.append(types['feature'][i])
 
 		train_reader=pd.read_csv(self.config.path_origin_train_x,iterator=False,delimiter=',',usecols=tuple(use),encoding='utf-8')
 		test_reader=pd.read_csv(self.config.path_origin_predict_x,iterator=False,delimiter=',',usecols=tuple(use),encoding='utf-8')
@@ -48,7 +60,7 @@ class Preprocessing(object):
 		X=data[:,1:]
 		if self.config.scale_level1=='log':
 			X=self.log_scale(X)
-		elif self.config.scale_level1=='log_move':
+		elif self.config.scale_level1=='log_move_cor':
 			X=self.log_scale_move(X)
 		elif self.config.scale_level1=='standard':	
 			X=self.standard_scale(X)
@@ -148,11 +160,12 @@ class Preprocessing(object):
 
 def scale_wrapper():
 	#scales=['log','log_move','standard','normalize','min_max','median','log_move_standard']
-	scales=['log_standard']
+	scales=['log_move_cor']
 	threads=[]
 	for x in scales:
 		config_instance=Config(x)
 		preprocessing_instance=Preprocessing(config_instance)
+		#preprocessing_instance.load_cor_feature()
 		threads.append(threading.Thread(target=preprocessing_instance.scale_X))
 
 	for t in threads:

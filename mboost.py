@@ -43,6 +43,7 @@ class Mboost(object):
 		predicts=[]
 		test_uids=[]
 		scores=[]
+		part_uids=[]
 
 		for i in range(n_folds):
 			train_index_0,test_index_0=f0[i][0],f0[i][1]
@@ -73,10 +74,13 @@ class Mboost(object):
 			predicts.extend((y_pred[:,1]).tolist())
 			test_uids.extend(test_uid.tolist())
 
-			#print auc_score
+			part_uid=self.part_train_data(y_test, y_pred[:,1], test_uid)
+			part_uids.extend(part_uid)
+			print auc_score
 			scores.append(auc_score)
 
-		self.output_level_train(predicts,test_uids,scores,level,name)
+		#self.output_level_train(predicts,test_uids,scores,level,name)
+		#self.output_part_uid(part_uids,level,name)
 		print name+" average scores:",np.mean(scores)
 
 	def xgb_level_train(self,level,name,X_0,X_1,uid_0,uid_1,params,round):
@@ -86,6 +90,7 @@ class Mboost(object):
 		predicts=[]
 		test_uids=[]
 		scores=[]
+		part_uids=[]
 
 		for i in range(n_folds):
 			train_index_0,test_index_0=f0[i][0],f0[i][1]
@@ -119,11 +124,44 @@ class Mboost(object):
 			predicts.extend((y_pred).tolist())
 			test_uids.extend(test_uid.tolist())
 
-			#print auc_score
+			#找出部分难分样本
+			#part_uid==self.part_train_data(y_test, y_pred, test_uid)
+			#part_uids.extend(part_uid)
+			print auc_score
 			scores.append(auc_score)
+			#return
 
-		self.output_level_train(predicts,test_uids,scores,level,name)
+		#self.output_level_train(predicts,test_uids,scores,level,name)
+		#self.output_part_uid(part_uids,level,name)
 		print name+" average scores:",np.mean(scores)
+
+
+	def part_train_data(self,y_test,y_pred,test_uid):
+		sorted_index=sorted(range(len(y_pred)),key=lambda k:y_pred[k],reverse=True)
+		y_pred=y_pred[sorted_index]
+		y_test=y_test[sorted_index]
+		test_uid=test_uid[sorted_index]
+		print len(y_test)
+		j=0
+		k=0
+		for i in range(len(y_test)):
+			if y_test[i]==1:
+				j+=1
+			if i<10 and y_test[i]==0:
+				k+=1
+				y_pred[i]=0
+				#print y_test[i],' ',y_pred[i],' ',test_uid[i],' ',i
+		print 'j:',j,' k:',k
+		#print 'part auc:',metrics.roc_auc_score(y_test[1000:1500],y_pred[1000:1500])
+		#print 'other auc:',metrics.roc_auc_score(np.hstack((y_test[:1000],y_test[1500:])),np.hstack((y_pred[:1000],y_pred[1500:])))
+		return test_uid[1000:1500]
+
+	def output_part_uid(self,part_uids,level,name):
+		f1=open(self.config.path_train+level+'/'+name+'_part_uid.csv','wb')
+		part_uids=set(part_uids)
+		for uid in part_uids:
+			f1.write(str(uid)+'\n')
+		f1.close()
 
 	def output_level_train(self,predicts,test_uids,scores,level,name):	
 		f1=open(self.config.path_train+level+'/'+name+'.csv','wb')

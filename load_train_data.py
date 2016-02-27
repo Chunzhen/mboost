@@ -22,7 +22,8 @@ class Load_train_data(object):
 		reader=pd.read_csv(self.config.path_train+level+'/'+name+'.csv',iterator=False,delimiter=',',encoding='utf-8',header=None)
 		d={}
 		for i in range(len(reader[0])):
-			d[str(reader[0][i])]=reader[1][i]
+			d[str(reader[0][i])]=np.log10(reader[1][i])
+			#d[str(reader[0][i])]=reader[1][i]
 		return d
 
 	def load_clf_score(self,level,name):
@@ -33,13 +34,13 @@ class Load_train_data(object):
 		level=self.level
 		clf_name=self.__clf_name
 		load_data_instance=load_data.Load_data(self.config)
-		#y,uids=load_data_instance.train_y()
-		#X_00,X_11,uid_00,uid_11=load_data_instance.train_xy()
+		y,uids=load_data_instance.train_y()
+		X_00,X_11,uid_00,uid_11=load_data_instance.train_xy()
 
-		X_00,test_X_00,X_11,test_X_11,uid_00,test_uid_00,uid_11,test_uid_11=load_data_instance.train_test_xy(1)
-		uids=np.hstack((uid_00,uid_11))
-		print len(uids)+len(test_uid_00)+len(test_uid_11)
-		y=np.hstack((np.ones(len(X_00)),np.zeros(len(X_11))))
+		# X_00,test_X_00,X_11,test_X_11,uid_00,test_uid_00,uid_11,test_uid_11=load_data_instance.train_test_xy(1)
+		# uids=np.hstack((uid_00,uid_11))
+		# print len(uids)+len(test_uid_00)+len(test_uid_11)
+		# y=np.hstack((np.ones(len(X_00)),np.zeros(len(X_11))))
 
 		column_important=[]
 		d={}
@@ -141,26 +142,30 @@ def  main():
 	ftype='log_move'
 	config_instance=Config(ftype)
 	level='level_one'
-	clf_name=[
-		ftype+'_lr_sag',
-		ftype+'_lr_newton',
-		ftype+'_lr_lbfgs',
-		ftype+'_lr_liblinear',
-		ftype+'_rf100',
-		ftype+'_rf200',
-		ftype+'_rf500',
-		ftype+'_rf1000',
-		ftype+'_gbdt20',
-		ftype+'_gbdt50',
-		ftype+'_gbdt100',
-		ftype+'_ada20',
-		ftype+'_ada50',
-		ftype+'_ada100',
-		ftype+'_xgb2000',
-		ftype+'_xgb2500',
-		ftype+'_xgb2000_2',
-		ftype+'_xgb2500_2'
-	]
+	# clf_name=[
+	# 	ftype+'_lr_sag',
+	# 	ftype+'_lr_newton',
+	# 	ftype+'_lr_lbfgs',
+	# 	ftype+'_lr_liblinear',
+	# 	ftype+'_rf100',
+	# 	ftype+'_rf200',
+	# 	ftype+'_rf500',
+	# 	ftype+'_rf1000',
+	# 	ftype+'_gbdt20',
+	# 	ftype+'_gbdt50',
+	# 	ftype+'_gbdt100',
+	# 	ftype+'_ada20',
+	# 	ftype+'_ada50',
+	# 	ftype+'_ada100',
+	# 	ftype+'_xgb2000',
+	# 	ftype+'_xgb2500',
+	# 	ftype+'_xgb2000_2',
+	# 	ftype+'_xgb2500_2'
+	# ]
+	clf_name=[]
+	for i in range(42):
+		clf_name.append(ftype+'_xgb1000_test_'+str(i))
+
 	load_data_instance=Load_train_data(config_instance,level,clf_name)
 	X_0,X_1,uid_0,uid_1=load_data_instance.level_data()
 	#load_data_instance.level_ranks()
