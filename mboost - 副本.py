@@ -64,7 +64,6 @@ class Mboost(object):
 		:type uid_1: List 类别1 uid
 		:层次训练方法，将正负类数据分别分为n folds，然后用(n-1) folds作为训练集
 		:用1 fold作为测试集，循环训练，得到一维特征的数据输出
-		:每次训练n folds个模型
 		"""
 		n_folds=self.config.n_folds
 		f0,f1=self.fold(len(X_0),len(X_1),n_folds) #获得n folds 下标
@@ -107,31 +106,18 @@ class Mboost(object):
 				#回归器直接输出预测值
 				y_pred=clf.predict(x_test)
 
-			#计算一折的AUC
 			auc_score=metrics.roc_auc_score(y_test,y_pred)
-			#保存每一折的预测结果
 			predicts.extend((y_pred).tolist())
 			test_uids.extend(test_uid.tolist())
 
 			print auc_score
 			scores.append(auc_score)
 
-		#保存输出结果
-		self.output_level_train(predicts,test_uids,scores,level,name)
+		#self.output_level_train(predicts,test_uids,scores,level,name)
+
 		print name+" average scores:",np.mean(scores)
 
 	def xgb_level_train(self,level,name,X_0,X_1,uid_0,uid_1,params,round):
-		"""
-		:type level: str 训练第几层
-		:type name: str 分类器命名
-		:type X_0: numpy.array 类别0特征矩阵
-		:type X_1: numpy.array 类型1特征矩阵
-		:type uid_0: List 类别0 uid
-		:type uid_1: List 类别1 uid
-		:type params: dict XGBoost的配置参数
-		:type round: int XGBoost的迭代次数
-		:与level train功能一致，只是分类器调用XGBoost实现的分类器
-		"""
 		n_folds=self.config.n_folds
 		f0,f1=self.fold(len(X_0),len(X_1),n_folds)
 
@@ -174,21 +160,48 @@ class Mboost(object):
 			predicts.extend((y_pred).tolist())
 			test_uids.extend(test_uid.tolist())
 
+			#找出部分难分样本
+			#part_uid==self.part_train_data(y_test, y_pred, test_uid)
+			#part_uids.extend(part_uid)
 			print auc_score
 			scores.append(auc_score)
+			#return
 
+		#self.output_level_train(predicts,test_uids,scores,level,name)
 		self.output_part_uid(part_uids,level,name)
 		print name+" average scores:",np.mean(scores)
 
+
+	def part_train_data(self,y_test,y_pred,test_uid):
+		sorted_index=sorted(range(len(y_pred)),key=lambda k:y_pred[k],reverse=False)
+		y_pred=y_pred[sorted_index]
+		y_test=y_test[sorted_index]
+		test_uid=test_uid[sorted_index]
+		print len(y_test)
+		j=0
+		k=0
+		a=1000
+		b=1500
+		for i in range(len(y_test[a:b])):
+			if y_test[i]==1:
+				j+=1
+			if i<10 and y_test[i]==0:
+				k+=1
+				y_pred[i]=0
+				#print y_test[i],' ',y_pred[i],' ',test_uid[i],' ',i
+		print 'j:',j,' k:',k
+		print 'part auc:',metrics.roc_auc_score(y_test[a:b],y_pred[a:b])
+		#print 'other auc:',metrics.roc_auc_score(np.hstack((y_test[:a],y_test[b:])),np.hstack((y_pred[:a],y_pred[b:])))
+		return test_uid[a:b]
+
+	def output_part_uid(self,part_uids,level,name):
+		f1=open(self.config.path_train+level+'/'+name+'_part_uid.csv','wb')
+		part_uids=set(part_uids)
+		for uid in part_uids:
+			f1.write(str(uid)+'\n')
+		f1.close()
+
 	def output_level_train(self,predicts,test_uids,scores,level,name):	
-		"""
-		:type predicts: List[float] 预测值列表
-		:type test_uids: List[str] 预测uid
-		:type scores: List[float] 每一折的AUC得分
-		:type level: str 训练第几层
-		:type name: str 分类器命名
-		:输出每层每个分类器的预测结果到文件
-		"""
 		f1=open(self.config.path_train+level+'/'+name+'.csv','wb')
 		f2=open(self.config.path_train+level+'/'+name+'_score.csv','wb')
 		for i in range(len(test_uids)):
@@ -201,16 +214,6 @@ class Mboost(object):
 		f2.close()
 
 	def level_predict(self,clf,level,name,X_0,X_1,predict_X,predict_uid):
-		"""
-		:type clf: scikit-learn classifier or regressor scikit-learn分类器或回归器
-		:type level: str 预测第几层
-		:type name: str 分类器命名
-		:type X_0: numpy.array 类别0特征矩阵
-		:type X_1: numpy.array 类型1特征矩阵
-		:type predict_X: 预测集的特征矩阵
-		:type predict_uid: 预测集的uid
-		:层次预测，每次只训练1个模型，预测1个结果
-		"""
 		start=datetime.now()
 		x_train=np.vstack((X_1,X_0))
 		y_train=np.hstack((np.ones(len(X_1)),np.zeros(len(X_0))))
@@ -227,16 +230,6 @@ class Mboost(object):
 		print "finish predict:"+name+" Run time:"+str(float((end-start).seconds)/60.0)+"min / "+str(float((end-start).seconds))+"s"
 
 	def xgb_predict(self,level,name,X_0,X_1,predict_X,predict_uid,params,round):
-		"""
-		:type name: str 分类器命名
-		:type X_0: numpy.array 类别0特征矩阵
-		:type X_1: numpy.array 类型1特征矩阵
-		:type predict_X: 预测集的特征矩阵
-		:type predict_uid: 预测集的uid
-		:type params: dict XGBoost的配置参数
-		:type round: int XGBoost的迭代次数
-		:XGBoost预测，每次只训练1个模型，预测1个结果
-		"""
 		start=datetime.now()
 		x_train=np.vstack((X_1,X_0))
 		y_train=np.hstack((np.ones(len(X_1)),np.zeros(len(X_0))))
@@ -251,13 +244,6 @@ class Mboost(object):
 		print "finish predict:"+name+" Run time:"+str(float((end-start).seconds)/60.0)+"min / "+str(float((end-start).seconds))+"s"
 
 	def output_level_predict(self,predicts,test_uids,level,name):	
-		"""
-		:type predicts: List[float] 预测值列表
-		:type test_uids: List[str] 预测uid
-		:type level: str 训练第几层
-		:type name: str 分类器命名
-		:输出预测结果到文件
-		"""
 		f1=open(self.config.path_predict+level+'/'+name+'.csv','wb')
 		f1.write('"uid","score"\n')
 		for i in range(len(test_uids)):

@@ -19,6 +19,12 @@ import load_predict_data
 import mboost
 
 class Xgb_level_predict_thread(object):
+	"""
+	:class Xgb_level_predict_thread
+	:层次训练的多线程类
+	:由于本人机器不太好，所以改为单线程运行
+	:只要将注释代码去掉注释，类继承object改为threading.Thread即可改为多线程运行
+	"""
 	def __init__(self,config,level,name,X_0,X_1,predict_X,predict_uid,params,round):
 		#threading.Thread.__init__(self)
 		self.config=config

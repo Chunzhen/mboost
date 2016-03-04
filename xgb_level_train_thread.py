@@ -18,22 +18,14 @@ import load_train_data
 import load_predict_data
 import mboost
 
-# import logging
-
-# logging.basicConfig(level=logging.DEBUG,
-#                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-#                 datefmt='%a, %d %b %Y %H:%M:%S',
-#                 filename='predict_level_one.log',
-#                 filemode='a+')
-
-# console = logging.StreamHandler()
-# console.setLevel(logging.INFO)
-# formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-# console.setFormatter(formatter)
-# logging.getLogger('').addHandler(console)
-
 
 class Xgb_level_train_thread(object):
+	"""
+	:class Xgb_level_train_thread
+	:层次训练的多线程类
+	:由于本人机器不太好，所以改为单线程运行
+	:只要将注释代码去掉注释，类继承object改为threading.Thread即可改为多线程运行
+	"""
 	def __init__(self,config,level,name,X_0,X_1,uid_0,uid_1,params,round):
 		#threading.Thread.__init__(self)
 		self.config=config

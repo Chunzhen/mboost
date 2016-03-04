@@ -12,16 +12,8 @@ from config import Config
 
 from sklearn import metrics
 from sklearn.metrics import roc_curve, auc
-import matplotlib.pyplot as plt
 
 class Local_predict_verify(object):
-	"""
-	:class Local_predict_verify
-	:本地验证集结果验证和blend类
-	:本类的主要作用是描绘本地验证集中不同分类器排名差的分布，通过分布来确定选择blend区间
-	:这是由于XGBoost这样的分类器对0,1两侧的分类能力很强，而对0.5附近的分类能力不强。而全局用其他分类器blend的效果会使0.5附近的分类效果变好，
-	:却使0,1两端的分类结果变差，所以要从中间截取一段区域去blend，才会对整体的结果有提升
-	"""
 	def __init__(self,config,level,clf_name):
 		self.config=config
 		self.level=level
@@ -37,92 +29,109 @@ class Local_predict_verify(object):
 	def level_data(self):
 		level=self.level
 		clf_name=self.__clf_name
-		#读取验证集数据
 		load_data_instance=load_data.Load_data(self.config)
 		X_0,test_X_0,X_1,test_X_1,uid_0,test_uid_0,uid_1,test_uid_1=load_data_instance.train_test_xy(1)
+		predict_X,uids=load_data_instance.predict_X()
+		test_X=np.vstack((test_X_0,test_X_1))
+		test_uid=(np.hstack((test_uid_0,test_uid_1))).tolist()
+		test_uid_dict={}
+		for i in range(len(test_uid)):
+			test_uid_dict[test_uid[i]]=i
 
+		d={}
 		test_uid_0=test_uid_0.astype('int').tolist()
 		test_uid_1=test_uid_1.astype('int').tolist()
+		#print test_uid_0
+		#return
 
 		for name in clf_name:
 			prob=[]
 			real=[]
 			prob_1=[]
 			prob_0=[]
-
-			#读取某分类器预测结果
 			column_dict=self.load_clf_file(level,name)
-			#排序
 			column_dict2=sorted(column_dict.items(),key=lambda d:d[1])
 
-			clf=[
-				'log_move_lr_sag',
-				# 'log_move_lr_newton',
-				# 'log_move_lr_lbfgs',
-				#  'log_move_lr_liblinear',
-				# 'log_move_rf100',
-				# 'log_move_rf200',
-				# 'log_move_rf500',
-				# 'log_move_rf1000',
-				# 'log_move_gbdt20',
-				# 'log_move_gbdt50',
-				# 'log_move_gbdt100',
-				# 'log_move_ada20',
-				# 'log_move_ada50',
-				# 'log_move_ada100',
-				# 'log_move_xgb2000',
-				# 'log_move_xgb2500',
-				#'log_move_xgb2000_2',
-				# 'log_move_xgb2500_2'
-
-			]
-			ranks=[]
-			for f_name in clf:
-				rank=self.level_ranks('level_one',f_name)
-				ranks.append(rank)
-
-			column_ranks=self.level_ranks(level,name)
-
+			lr_ranks=self.level_ranks('log_move_lr_sag')
+			column_ranks=self.level_ranks(name)
+			#print lr_ranks
 			i=0
+
+			print len(column_dict2)
+			#return
 			aa=0
 			r_lr=0
-			one_diff=[]
-			zero_diff=[]
-			one_index=[]
-			zero_index=[]
-			#选择区间进行blend
 			for uid, score in column_dict2:
-				# if i<2000:
+				if i<2000:
+					i+=1
+					continue
+				t_x,t_y=[],[]
+				k=0
+				loss_index=[]
+				for j in range(len(test_X[test_uid_dict[str(12965)]])):
+					if test_X[test_uid_dict[str(12965)]][j]!=-1 and test_X[test_uid_dict[str(uid)]][j]!=-1:
+						t_x.append(test_X[test_uid_dict[str(12965)]][j])
+						t_y.append(test_X[test_uid_dict[str(uid)]][j])
+
+					if test_X[test_uid_dict[str(uid)]][j]==-1 or test_X[test_uid_dict[str(uid)]][j]==-2 or test_X[test_uid_dict[str(uid)]][j]==0:
+						k+=1
+						loss_index.append(j)
+
+				# if k<200:
 				# 	i+=1
 				# 	continue
-				diff=0
-				for rank in ranks:
-					diff+=column_ranks[uid][0]-rank[uid][0]
-				#diff=diff/4
-				if diff>1700+i*0.2:
+				cor=np.corrcoef(t_x,t_y)[0,1]
+				if lr_ranks[uid][0]<500:
+					#print 'bingo'
+
 					column_dict[uid]=0
+					# if uid==18893 or uid==19444:
+					# 	column_dict[uid]=1
 					r_lr+=1
 					if uid in test_uid_1:
 						print "no!!!"
-
 				if uid in test_uid_0:
-					zero_diff.append(diff)
-					zero_index.append(i)
+					print "0:",uid," ",score,' ',column_ranks[uid],' ',lr_ranks[uid],'k:',k	
+					#print '0:','k:',k
 					aa+=1			
 					pass
 				else:
-					one_diff.append(diff)
-					one_index.append(i)
+					print "bingo 1:",uid," ",score,' ',column_ranks[uid],' ',lr_ranks[uid],',',np.corrcoef(t_x,t_y)[0,1],'k:',k	
+					#print 'bingo 1, k:',k
+					#print loss_index
 					pass
+
+				#print 'k:',k
+				#print ""
+				# if i<91:
+				# 	# if  i==1:
+				# 	# 	column_dict[uid]=1
+				# 	i+=1
+				# 	continue
+				#column_dict[uid]=0
+				
+				
+				# if uid==12935:
+				# 	print name," ",i
+				# 	break
+				# if  i%2==1:
+				# 	column_dict[uid]=1
+
+				# if i>2990:
+				# 	if uid in test_uid_0:
+				# 		print 'change 0'
+				# 		column_dict[uid]=0
+				# 	else:
+				# 		#print 'change 1'
+				# 		pass
 					
 				i+=1
-				# if i>400:
-				# 	break
+				if i>2100:
+					break
 
 			print aa
 			print 'r_lr:',r_lr
 
-			#计算blend后的AUC
 			for uid,score in column_dict.items():
 				prob.append(score)
 				if uid in test_uid_0:
@@ -136,32 +145,27 @@ class Local_predict_verify(object):
 
 			auc_score=metrics.roc_auc_score(real,prob)
 			print name,"  "," auc:",auc_score	
+
 			print '0:',max(prob_0),min(prob_0)
 			print "1:",max(prob_1),min(prob_1)
 
-			#绘制不同分类器的排名差结果
-			idex=0
-			self.print_diff(zero_diff[idex:],zero_index[idex:],one_diff[idex:],one_index[idex:])
+			prob_0=sorted(prob_0)
+			#print prob_0
+			for i in range(len(prob_0)):
+				if prob_0[i]>=0.04:
+					print i 
+					break
+
 			return
 
-	def print_diff(self,zero_diff,zero_index,one_diff,one_index):
-		"""
-		:type zero_diff: List[int] 0类的排名分布差
-		:type zero_index: List[int] 0类的下标
-		:type one_diff: List[int] 1类的排名分布差
-		:type one_index: List[int] 1类的下标
-		"""
-		plt.scatter(zero_index,zero_diff)
-		plt.scatter(one_index,one_diff,c='red')
-		plt.show()
+	def level_ranks(self,name):
+		level=self.level
 
-	def level_ranks(self,level,name):
-		"""
-		返回不同分类样本在本分类器中的排名
-		"""
 		load_data_instance=load_data.Load_data(self.config)
 		X_0,test_X_0,X_1,test_X_1,uid_0,test_uid_0,uid_1,test_uid_1=load_data_instance.train_test_xy(1)
+		predict_X,uids=load_data_instance.predict_X()
 
+		d={}
 		test_uid_0=test_uid_0.astype('int').tolist()
 		test_uid_1=test_uid_1.astype('int').tolist()
 
@@ -178,13 +182,22 @@ class Local_predict_verify(object):
 
 		return ranks
 
+
+	def output_rank(self,ranks,path):
+		f=open(path,'wb')
+		for uid,rank in ranks.items():
+			f.write(str(uid))
+			for r in rank:
+				f.write(','+str(r))
+			f.write('\n')
+		f.close()
+
 def main():
 	config_instance=Config('log')
-	config_instance.path_predict=config_instance.path+'predict_local/' #测试输出文件夹
 	level='level_one'
 	clf_name=[
 		#'log_move_lr_sag',
-		#'log_move_lr_newton',
+		# 'log_move_lr_newton',
 		# 'log_move_lr_lbfgs',
 		# 'log_move_lr_liblinear',
 		# 'log_move_rf100',
@@ -200,8 +213,7 @@ def main():
 		'log_move_xgb2000',
 		#'log_move_xgb2500',
 		# 'log_move_xgb2000_2',
-		# 'log_move_xgb2500_2',
-		#'log_move_ridge_part'
+		# 'log_move_xgb2500_2'
 
 	]
 	predict_data_instance=Local_predict_verify(config_instance,level,clf_name)
