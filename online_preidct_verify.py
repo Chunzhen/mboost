@@ -33,7 +33,7 @@ def output_blend(d,path):
 def blend():
 	config_instance=config.Config('log_move')
 	#当前最好的XGBoost模型最好结果
-	column_dict=score_dict(config_instance.path_predict+'output/'+"best_0.7309.csv")
+	column_dict=score_dict(config_instance.path_predict+'output/'+"best_0.7291.csv")
 	column_dict2=sorted(column_dict.items(),key=lambda d:d[1],reverse=True)
 	#print column_dict2
 	#逻辑回归的结果
@@ -46,6 +46,11 @@ def blend():
 	aa=0
 	diffs=[]
 	for uid, score in column_dict2:
+		if uid=='19343':
+			column_dict[uid]=0
+		elif uid=='3399':
+			column_dict[uid]=1
+
 		if i>=2000 and i <=2100:
 			if new_ranks[uid][0]-old_ranks[uid][0]>1000:
 				column_dict[uid]=1
@@ -68,7 +73,7 @@ def blend():
 		i+=1
 	print aa
 
-	output_blend(column_dict,config_instance.path_predict+'output/'+"mix_all.csv")
+	output_blend(column_dict,config_instance.path_predict+'output/'+"mix_all_correct.csv")
 
 def print_diff(diffs):
 		plt.plot(range(len(diffs)),diffs)
