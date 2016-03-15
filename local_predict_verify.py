@@ -56,21 +56,21 @@ class Local_predict_verify(object):
 			column_dict2=sorted(column_dict.items(),key=lambda d:d[1])
 
 			clf=[
-				'log_move_lr_sag',
-				# 'log_move_lr_newton',
+				#'log_move_lr_sag',
+				#'log_move_lr_newton',
 				# 'log_move_lr_lbfgs',
 				#  'log_move_lr_liblinear',
-				# 'log_move_rf100',
+				#'log_move_rf100',
 				# 'log_move_rf200',
 				# 'log_move_rf500',
 				# 'log_move_rf1000',
 				# 'log_move_gbdt20',
 				# 'log_move_gbdt50',
-				# 'log_move_gbdt100',
+				#'log_move_gbdt100',
 				# 'log_move_ada20',
 				# 'log_move_ada50',
-				# 'log_move_ada100',
-				# 'log_move_xgb2000',
+				'log_move_ada100',
+				#'log_move_xgb2000',
 				# 'log_move_xgb2500',
 				#'log_move_xgb2000_2',
 				# 'log_move_xgb2500_2'
@@ -78,7 +78,7 @@ class Local_predict_verify(object):
 			]
 			ranks=[]
 			for f_name in clf:
-				rank=self.level_ranks('level_one',f_name)
+				rank=self.level_ranks('level_two',f_name)
 				ranks.append(rank)
 
 			column_ranks=self.level_ranks(level,name)
@@ -91,6 +91,18 @@ class Local_predict_verify(object):
 			one_index=[]
 			zero_index=[]
 			#选择区间进行blend
+
+			# xgb_ranks_true=[]
+			# xgb_ranks_false=[]
+			# lr_ranks_true=[]
+			# lr_ranks_false=[]
+			# for k in range(21):
+			# 	xgb_ranks_true.append(0)
+			# 	xgb_ranks_false.append(0)
+			# 	lr_ranks_true.append(0)
+			# 	lr_ranks_false.append(0)
+			# print xgb_ranks_true
+
 			for uid, score in column_dict2:
 				# if i<2000:
 				# 	i+=1
@@ -99,25 +111,39 @@ class Local_predict_verify(object):
 				for rank in ranks:
 					diff+=column_ranks[uid][0]-rank[uid][0]
 				#diff=diff/4
-				if diff>1700+i*0.2:
+				if diff>500: #700+i*0.58
 					column_dict[uid]=0
 					r_lr+=1
 					if uid in test_uid_1:
 						print "no!!!"
 
+				# rank_d=int(column_ranks[uid][0]/300)
+				# rank_d2=int(rank[uid][0]/300)
 				if uid in test_uid_0:
 					zero_diff.append(diff)
 					zero_index.append(i)
-					aa+=1			
+					aa+=1
+					
+					# xgb_ranks_true[rank_d]+=1
+					# lr_ranks_true[rank_d2]+=1
+
 					pass
 				else:
 					one_diff.append(diff)
 					one_index.append(i)
+					# xgb_ranks_false[rank_d]+=1
+					# lr_ranks_false[rank_d2]+=1
 					pass
 					
 				i+=1
 				# if i>400:
 				# 	break
+
+
+			# print xgb_ranks_true
+			# print xgb_ranks_false
+			# print lr_ranks_true
+			# print lr_ranks_false
 
 			print aa
 			print 'r_lr:',r_lr

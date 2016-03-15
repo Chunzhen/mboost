@@ -116,7 +116,7 @@ class Load_train_data(object):
 
 	def level_data_part(self):
 		"""
-		将本层的靠近负样本端的XGBoost与LR相差较大的样本提取出来，进行子模型的训练
+		读取上一层多个训练器的输出结果，作为下一层的训练特征
 		"""
 		level=self.level
 		clf_name=self.__clf_name
@@ -148,17 +148,11 @@ class Load_train_data(object):
 
 			lr_dict2=self.load_clf_file('level_two','log_move_lr_sag')
 			lr_rank2=self.level_ranks(lr_dict2)
+			#print lr_rank
 
 			print name,"  ",column_score
 			column_dict2=sorted(column_dict.items(),key=lambda d:d[1])
-			max_column=max([v for k,v in column_dict.items()])
-			min_column=min([v for k,v in column_dict.items()])
-
-			max_lr=max([v for k,v in lr_dict2.items()])
-			min_lr=min([v for k,v in lr_dict2.items()])
-			print max_column,' ',min_column
-			print max_lr,' ',min_lr
-
+			#print column_dict2
 			i=0
 			one_diff=[]
 			zero_diff=[]
@@ -166,42 +160,61 @@ class Load_train_data(object):
 			zero_index=[]
 			yy=[]
 			scores=[]
+			bingo_rank=[]
+
+			bingo_y=[]
+			bingo_scores=[]
 
 			for uid,score in column_dict2:
-				score=(max_column-score)/(max_column-min_column)
 				temp=d.get(uid,[])
 				temp.append(column_dict[uid])
 				d[uid]=temp
 
 				diff=column_rank[uid]-lr_rank[uid]
 				if uid in uid_00:
+					#print diff,' ','y=',0
 					zero_diff.append(diff)
 					zero_index.append(i)
 					yy.append(0)
 				else:
+					#print diff,' ','y=',1
 					one_diff.append(diff)
 					one_index.append(i)
 					yy.append(1)
-
-				if diff>2000+i*0.4:
+				#print diff
+				if diff>2500+i*0.15:  #lr diff>2500+i*0.2
 					diff_uid.add(uid)
-					if lr_rank2[uid]>200:
-						score=-100
-						#score=0.7+0.3*((max_lr-score)/(max_lr-min_lr))
 
+					if uid in uid_00:
+						bingo_y.append(0)
+						pass
+					else:
+						bingo_y.append(1)
+						pass
+					
+						#print lr_rank2[uid],' ',column_rank[uid]
+						#bingo_rank.append(lr_rank2[uid])
+					bingo_scores.append(score)
+					if lr_rank2[uid]<200: #or lr_rank2[uid]>2282
+						#print 'bingo'
+						#print lr_rank2[uid],' ',column_rank[uid]
+						score=-100
 
 				scores.append(score)
+
 				i+=1
 
 			idex=0
 			auc_score=metrics.roc_auc_score(yy,scores)
-			print 'auc:',1-auc_score
-			#self.print_diff(zero_diff[idex:],zero_index[idex:],one_diff[idex:],one_index[idex:])
-			break
+			#auc_bingo=metrics.roc_auc_score(bingo_y,bingo_scores)
+			#print "auc:",auc_score,' auc_bingo:',auc_bingo
+			print sorted(bingo_rank)
+			self.print_diff(zero_diff[idex:],zero_index[idex:],one_diff[idex:],one_index[idex:])
 		X_0=[]
 		X_1=[]
 		uid_0=[]
 		uid_1=[]
+		print len(diff_uid)
 
 		# #将类0与类1拆分到不同数组
 		for i in range(len(y)):
@@ -225,9 +238,9 @@ class Load_train_data(object):
 		"""
 		x=[]
 		y=[]
-		for i in range(2000,15000):
+		for i in range(3000,15000):
 			x.append(i)
-			y.append(2000+i*0.4)
+			y.append(2500+i*0.2)
 
 		plt.plot(x,y,color='yellow',linewidth=3)
 		plt.title(u'XGBoost 2000与LR的排名差')

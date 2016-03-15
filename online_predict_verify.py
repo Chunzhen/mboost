@@ -66,23 +66,26 @@ def blend():
 		# if i>=4200 and i<=4300:
 		# 	if new_ranks[uid][0]-old_ranks[uid][0]>1200:
 		# 		column_dict[uid]=1
-
-		if i<2000 or i>4900:
+		diff=new_ranks[uid][0]-old_ranks[uid][0]
+		diffs.append(diff)
+		if i<4000 or i>4900:
 			i+=1
 			continue
 		else:
-			pass
-			#if new_ranks[uid][0]-old_ranks[uid][0]>1200:
+			#pass
+			if new_ranks[uid][0]-old_ranks[uid][0]>1500:
+				column_dict[uid]=1
+				aa+=1
 
 
 
-		print uid,' ',score,' ',old_ranks[uid],' ',new_ranks[uid],' ',column_dict_new[uid]
+		#print uid,' ',score,' ',old_ranks[uid],' ',new_ranks[uid],' ',column_dict_new[uid]
 
 
 		i+=1
 	print aa
-	#print_diff(diffs)
-	output_blend(column_dict,config_instance.path_predict+'output/'+"new1.csv")
+	print_diff(diffs)
+	output_blend(column_dict,config_instance.path_predict+'output/'+"ne2.csv")
 
 def print_diff(diffs):
 		plt.plot(range(len(diffs)),diffs)

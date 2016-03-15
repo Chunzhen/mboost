@@ -27,7 +27,7 @@ class Config(object):
 		self.n_folds=5 # n 划分数据集为多少折，本次实验统一划分为5折
 
 		self.path_train=self.path+'train/' #训练输出文件夹
-		self.path_predict=self.path+'predict/' #测试输出文件夹
+		self.path_predict=self.path+'predict_local/' #测试输出文件夹
 
 		self.path_cor=self.path+'statistic/cor_log.csv' #高特征列与类标签相似度高于0.01的特征
 

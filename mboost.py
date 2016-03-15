@@ -171,13 +171,11 @@ class Mboost(object):
 			y_pred=model.predict(dtest)
 
 			auc_score=metrics.roc_auc_score(y_test,y_pred)
-			predicts.extend((y_pred).tolist())
-			test_uids.extend(test_uid.tolist())
 
 			print auc_score
 			scores.append(auc_score)
 
-		self.output_part_uid(part_uids,level,name)
+		#self.output_part_uid(part_uids,level,name)
 		print name+" average scores:",np.mean(scores)
 
 	def output_level_train(self,predicts,test_uids,scores,level,name):	
